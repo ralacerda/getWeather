@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"getWeather/datatype"
 	"io"
 	"net/http"
@@ -9,7 +10,16 @@ import (
 
 const url = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m"
 
-func GetWeather() (*datatype.Weather, error) {
+type Coord struct {
+	Latitude  float64
+	Longitude float64
+}
+
+func GetWeather(coord Coord) (*datatype.Weather, error) {
+	if coord.Latitude == 0 && coord.Longitude == 0 {
+		return nil, fmt.Errorf("invalid coordinates")
+	}
+
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err
